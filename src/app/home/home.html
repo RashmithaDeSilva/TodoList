@@ -1,3 +1,19 @@
-<div class="border border-red-600 h-full w-full">
-    <h1>Home</h1>
+<div class="border border-red-600 h-full w-full flex justify-center items-center flex-col">
+    
+    <div class="border border-red-600 flex justify-center items-center gap-x-8">
+        
+        <h4 class="text-xl text-indigo-600 font-bold">All todos {{ todoCount() }}</h4>
+        
+        <button (click)="addTodo()" class="bg-indigo-500 text-white font-medium py-2 px-5 rounded-lg hover:bg-indigo-800 transition-all duration-300">
+            Add
+        </button>
+    </div>
+
+
+
+    @for (todo of todos(); track todo.id) {
+        <div class="border border-red-600">
+            <h1>{{ todo.id }}</h1>
+        </div>
+    }
 </div>

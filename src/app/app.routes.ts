@@ -4,10 +4,10 @@ export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'todo',
+        redirectTo: 'todolist',
         
     },{
-        path: 'todo',
+        path: 'todolist',
         pathMatch: 'full',
         loadComponent: () => {
             return import('./home/home').then((module) => module.Home);
