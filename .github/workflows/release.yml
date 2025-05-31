@@ -1,0 +1,37 @@
+name: Build and Release Angular App
+
+on:
+  push:
+    tags:
+      - 'v*' # Runs on version tags like v1.0.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Angular App
+        run: npm run build -- --configuration production
+
+      - name: Create ZIP package
+        run: |
+          cd dist
+          zip -r ../angular-todo-${{ github.ref_name }}.zip ./*
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: angular-todo-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
