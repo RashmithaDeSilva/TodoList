@@ -2,8 +2,8 @@ name: Build and Release Angular App
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*' # Runs on version tags like v1.0.0
 
 jobs:
   build:
@@ -19,11 +19,10 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Install dependencies
-        run: npm install --force
-
+        run: | 
+          npm install --legacy-peer-dep
+          npm install --force
+        
       - name: Build Angular App
         run: npm run build -- --configuration production
 
