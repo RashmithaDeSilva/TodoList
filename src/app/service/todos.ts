@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Todo } from '../models/todo.type';
+import { computed, Injectable } from '@angular/core';
+import { TodoModel } from '../models/todo.type';
 
 @Injectable({
   providedIn: 'root'
 })
-export class Todos {
+export class TodoService {
   private db: IDBDatabase | null = null;
   private dbReady!: Promise<void>;
   private resolveReady!: () => void;
+  todoCount: number = 0;
 
   constructor() { 
     this.dbReady = new Promise((resolve) => {
@@ -51,7 +52,7 @@ export class Todos {
   }
 
   // Add todo
-  async addTodo(todo: Omit<Todo, 'id'>): Promise<void> {
+  async addTodo(todo: Omit<TodoModel, 'id'>): Promise<void> {
     await this.waitForDB();
     return new Promise((resolve, reject) => {
       if (!this.db) return reject('DB not ready');
@@ -73,7 +74,7 @@ export class Todos {
   }
 
   // Get todos
-  async getTodos(): Promise<Todo[]> {
+  async getTodos(): Promise<TodoModel[]> {
     const db = await this.waitForDB();
     return new Promise((resolve, reject) => {
       const tx = db.transaction('todos', 'readonly');
@@ -81,7 +82,7 @@ export class Todos {
       const request = store.getAll();
 
       request.onsuccess = () => {
-        const todos = (request.result as any[]).map((item): Todo => ({
+        const todos = (request.result as any[]).map((item): TodoModel => ({
           ...item,
           createdDate: new Date(item.createdDate),
           dueDate: new Date(item.dueDate)
@@ -94,7 +95,7 @@ export class Todos {
   }
 
   // Update todo
-  async updateTodo(todo: Todo): Promise<void> {
+  async updateTodo(todo: TodoModel): Promise<void> {
     await this.waitForDB();
     return new Promise((resolve, reject) => {
       if (!this.db) return reject('DB not ready');
@@ -125,6 +126,21 @@ export class Todos {
 
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  // Get todo count
+  async getTodoCount(): Promise<number> {
+    await this.waitForDB();
+    return new Promise((resolve, reject) => {
+      if (!this.db) return reject('DB not ready');
+
+      const tx = this.db.transaction('todos', 'readonly');
+      const store = tx.objectStore('todos');
+      const request = store.count();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
     });
   }
   
