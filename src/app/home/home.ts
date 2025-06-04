@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, ViewChild } from '@angular/core';
 import { TodoService } from '../service/todos';
 import { TodoModel } from '../models/todo.type';
 import { TodoComponent } from '../components/todo/todo';
@@ -9,9 +9,9 @@ import { TodoComponent } from '../components/todo/todo';
   templateUrl: './home.html',
 })
 export class Home implements OnInit {
+  // This will call child component
+  @ViewChild(TodoComponent) child!: TodoComponent;
   todoCount = signal<Number>(0);
-
-  isCheange = computed<Promise<number>>(async () => await this.todoService.getTodoCount());
 
   constructor(private todoService: TodoService) {}
 
@@ -34,6 +34,12 @@ export class Home implements OnInit {
     };
 
     await this.todoService.addTodo(newTodo);
+    await this.loadTodoCount();
+    await this.child.loadTodos();
+  }
+
+  // This function trigger when child component send notify
+  protected async onChildNotify() {
     await this.loadTodoCount();
   }
   

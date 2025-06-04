@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import { TodoModel } from '../../models/todo.type';
 import { TodoService } from '../../service/todos';
 
@@ -8,6 +8,8 @@ import { TodoService } from '../../service/todos';
   templateUrl: './todo.html'
 })
 export class TodoComponent implements OnInit {
+  // This snd notification to perent
+  @Output() notify = new EventEmitter<void>();
   protected todos = signal<TodoModel[]>([]);
   protected isTodoExsist = signal<boolean>(false);
   protected editTodoData = signal<TodoModel | null>(null);
@@ -28,6 +30,7 @@ export class TodoComponent implements OnInit {
   protected async deleteTodo(id: number) {
     await this.todoService.deleteTodo(id);
     await this.loadTodos();
+    this.notify.emit(); // Send notification to parent
   }
 
   protected editTodo(todo: TodoModel) {
