@@ -42,7 +42,7 @@ export class TodoComponent implements OnInit {
     this.editTodoData.set(null);
   }
 
-  async saveEdit(event: Event, title: string, body: string, dueDateStr: string) {
+  protected async saveEdit(event: Event, title: string, body: string, dueDateStr: string) {
     event.preventDefault(); // Prevents page reload
 
     if (!title || !dueDateStr) {

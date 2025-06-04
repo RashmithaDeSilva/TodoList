@@ -5,12 +5,28 @@
     <h4 class="text-xl sm:text-2xl text-indigo-600 font-bold">
       All Todos ({{ todoCount() }})
     </h4>
+
     <button 
       (click)="addTodo()" 
-      class="bg-indigo-500 text-white font-semibold py-2 px-6 rounded-lg hover:bg-indigo-700 transition-all duration-300"
+      class="hidden md:inline-block bg-indigo-500 text-white font-semibold py-2 px-6 rounded-lg hover:bg-indigo-700 transition-all duration-300"
     >
       Add Todo
     </button>
+
+    <button 
+      (click)="addTodo()" 
+      class="md:hidden bg-indigo-500 text-white font-bold py-5 px-5 rounded-full 
+      hover:bg-indigo-700 transition-all duration-300 fixed right-12 bottom-8"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0,0,256,256">
+        <g fill="#ffffff" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+          <g transform="scale(10.66667,10.66667)">
+            <path d="M11,2v9h-9v2h9v9h2v-9h9v-2h-9v-9z"></path>
+          </g>
+        </g>
+      </svg>
+    </button>
+
   </div>
 
   <!-- Todo component -->
