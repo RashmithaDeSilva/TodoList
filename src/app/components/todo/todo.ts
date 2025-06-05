@@ -1,10 +1,11 @@
 import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import { TodoModel } from '../../models/todo.type';
 import { TodoService } from '../../service/todos';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-todo',
-  imports: [],
+  imports: [NgClass],
   templateUrl: './todo.html'
 })
 export class TodoComponent implements OnInit {
@@ -74,7 +75,7 @@ export class TodoComponent implements OnInit {
 
   protected formatDate(date: Date): string {
     const d = new Date(date);
-    return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
+    return `${ d.getDate().toString().padStart(2, '0') }/${ (d.getMonth() + 1).toString().padStart(2, '0') }/${ d.getFullYear() }`;
   }
 
   protected calculateCountdown(dueDate: Date): string {
@@ -88,6 +89,12 @@ export class TodoComponent implements OnInit {
     const minutes = Math.floor((diff / (1000 * 60)) % 60);
 
     return `${days}d ${hours}h ${minutes}m`;
+  }
+
+  protected async completedCheckbox(id: number, event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    await this.todoService.checkTodo(id, isChecked);
+    await this.loadTodos();
   }
   
 }

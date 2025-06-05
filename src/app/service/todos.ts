@@ -143,5 +143,31 @@ export class TodoService {
       request.onerror = () => reject(request.error);
     });
   }
+
+  // Check todo
+  async checkTodo(todoId: number, value: boolean): Promise<void> {
+    await this.waitForDB();
+    return new Promise((resolve, reject) => {
+      if (!this.db) return reject('DB not ready');
+
+      const tx = this.db.transaction('todos', 'readwrite');
+      const store = tx.objectStore('todos');
+      const getRequest = store.get(todoId);
+
+      getRequest.onsuccess = () => {
+        const todo = getRequest.result;
+        if (!todo) {
+          return reject(`Todo with ID ${ todoId } not found`);
+        }
+
+        todo.completed = value;
+        store.put(todo);
+      };
+      
+      getRequest.onerror = () => reject(getRequest.error);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
   
 }
