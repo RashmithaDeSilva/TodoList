@@ -15,17 +15,33 @@ export class TodoComponent implements OnInit {
   protected isTodoExsist = signal<boolean>(false);
   protected editTodoData = signal<TodoModel | null>(null);
   protected errorMessage = signal<string | null>(null);
+  protected countdownMap = new Map<number, string>();
+  private intervalId: number = 0;
 
   constructor(private todoService: TodoService) {}
 
   async ngOnInit() {
+    // Load todos
     await this.loadTodos();
     this.isTodoExsist.set(true);
+
+    // Set live time timer
+    this.updateCountdowns();
+    this.intervalId = setInterval(() => {
+      this.updateCountdowns();
+    }, 60_000); // every minute
+  }
+
+  ngOnDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   async loadTodos() {
     const data = await this.todoService.getTodos();
     this.todos.set(data);
+    this.updateCountdowns();
   }
 
   protected async deleteTodo(id: number) {
@@ -80,7 +96,16 @@ export class TodoComponent implements OnInit {
     return `${ d.getDate().toString().padStart(2, '0') }/${ (d.getMonth() + 1).toString().padStart(2, '0') }/${ d.getFullYear() }`;
   }
 
-  protected calculateCountdown(dueDate: Date): string {
+  protected updateCountdowns() {
+    this.countdownMap.clear();
+    for (const todo of this.todos()) {
+      if (!todo.completed) {
+        this.countdownMap.set(todo.id, this.calculateCountdown(todo.dueDate));
+      }
+    }
+  }
+
+  private calculateCountdown(dueDate: Date): string {
     const now = new Date();
     const diff = new Date(dueDate).getTime() - now.getTime();
 

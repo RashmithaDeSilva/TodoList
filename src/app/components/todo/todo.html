@@ -53,6 +53,7 @@
                 </div>
             </form>
 
+
         } @else {
             <!-- View Mode -->
             <div class="flex justify-between items-start mb-2">
@@ -90,7 +91,7 @@
                     [ngClass]="{
                         'text-green-500': todo.completed,
                         'bg-white text-red-500': !todo.completed
-                    }" >{{ todo.completed ? 'Done' : calculateCountdown(todo.dueDate) }}
+                    }" >{{ todo.completed ? 'Done' : countdownMap.get(todo.id) }}
                 </div>
             </div>
 
