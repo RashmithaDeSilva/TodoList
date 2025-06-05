@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, ViewChild } from '@angular/core';
+import { Component, OnInit, signal, computed, ViewChild, Signal } from '@angular/core';
 import { TodoService } from '../service/todos';
 import { TodoModel } from '../models/todo.type';
 import { TodoComponent } from '../components/todo/todo';
@@ -11,12 +11,15 @@ import { TodoComponent } from '../components/todo/todo';
 export class Home implements OnInit {
   // This will call child component
   @ViewChild(TodoComponent) child!: TodoComponent;
-  todoCount = signal<Number>(0);
+  protected todoCount = signal<Number>(0);
+  protected isEditModeFromChild: Signal<boolean> = signal(false);;
+
 
   constructor(private todoService: TodoService) {}
 
   async ngOnInit() {
     await this.loadTodoCount();
+    this.isEditModeFromChild = computed(() => this.child?.isEditMode?.() ?? false);
   }
 
   private async loadTodoCount() {

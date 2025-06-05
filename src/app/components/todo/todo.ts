@@ -18,6 +18,7 @@ export class TodoComponent implements OnInit {
   protected countdownMap = new Map<number, string>();
   private intervalId = signal<number>(-1);
   protected isDeleteId = signal<number>(-1);
+  isEditMode = signal<boolean>(false);
 
 
   constructor(private todoService: TodoService) {}
