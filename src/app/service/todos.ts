@@ -162,5 +162,22 @@ export class TodoService {
       tx.onerror = () => reject(tx.error);
     });
   }
-  
+
+  // Get newest todo
+  async getNewestTodo(): Promise<TodoModel | undefined> {
+    const db = await this.waitForDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('todos', 'readonly');
+      const store = tx.objectStore('todos');
+      const request = store.openCursor(null, 'prev'); // 'prev' = descending order by key (id)
+
+      request.onsuccess = () => {
+        const cursor = request.result;
+        resolve(cursor?.value as TodoModel);
+      };
+
+      request.onerror = () => reject(request.error);
+    });
+  }
+
 }

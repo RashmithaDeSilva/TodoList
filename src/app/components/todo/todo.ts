@@ -11,7 +11,7 @@ import { NgClass } from '@angular/common';
 export class TodoComponent implements OnInit {
   // This snd notification to perent
   @Output() notify = new EventEmitter<void>();
-  protected todos = signal<TodoModel[]>([]);
+  todos = signal<TodoModel[]>([]);
   protected isTodoExsist = signal<boolean>(false);
   protected editTodoData = signal<TodoModel | null>(null);
   protected errorMessage = signal<string | null>(null);
@@ -53,13 +53,14 @@ export class TodoComponent implements OnInit {
     this.notify.emit(); // Send notification to parent
   }
 
-  protected editTodo(todo: TodoModel) {
+  editTodo(todo: TodoModel) {
     this.editTodoData.set({ ...todo });
     this.errorMessage.set(null);
   }
 
-  protected cancelEdit() {
+  protected async cancelEdit() {
     this.editTodoData.set(null);
+    await this.loadTodos();
   }
 
   protected async saveEdit(event: Event, title: string, body: string, dueDateStr: string) {

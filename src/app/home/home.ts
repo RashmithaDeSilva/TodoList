@@ -38,7 +38,7 @@ export class Home implements OnInit {
 
     await this.todoService.addTodo(newTodo);
     await this.loadTodoCount();
-    await this.child.loadTodos();
+    // await this.child.loadTodos();
   }
 
   // This function trigger when child component send notify
@@ -46,4 +46,19 @@ export class Home implements OnInit {
     await this.loadTodoCount();
   }
   
+  protected async handleAddTodo(child: TodoComponent) {
+    await this.addTodo();
+    const newest = await this.todoService.getNewestTodo();
+
+    if (newest) {
+      let todos = await this.todoService.getTodos();
+      todos.pop()
+      todos.unshift(newest);
+
+      child.todos.set(todos);
+      child.editTodo(newest);
+    }
+  }
+
+
 }
