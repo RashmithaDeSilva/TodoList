@@ -16,7 +16,9 @@ export class TodoComponent implements OnInit {
   protected editTodoData = signal<TodoModel | null>(null);
   protected errorMessage = signal<string | null>(null);
   protected countdownMap = new Map<number, string>();
-  private intervalId: number = 0;
+  private intervalId = signal<number>(-1);
+  protected isDeleteId = signal<number>(-1);
+
 
   constructor(private todoService: TodoService) {}
 
@@ -27,14 +29,14 @@ export class TodoComponent implements OnInit {
 
     // Set live time timer
     this.updateCountdowns();
-    this.intervalId = setInterval(() => {
+    this.intervalId.set(setInterval(() => {
       this.updateCountdowns();
-    }, 60_000); // every minute
+    }, 60_000)); // every minute
   }
 
   ngOnDestroy() {
     if (this.intervalId) {
-      clearInterval(this.intervalId);
+      clearInterval(this.intervalId());
     }
   }
 
