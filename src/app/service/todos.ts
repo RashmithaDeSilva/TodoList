@@ -59,14 +59,7 @@ export class TodoService {
 
       const tx = this.db.transaction('todos', 'readwrite');
       const store = tx.objectStore('todos');
-
-      const newTodo = {
-        ...todo,
-        createdDate: new Date().toISOString(), // Set system time
-        dueDate: todo.dueDate.toISOString()
-      };
-
-      store.add(newTodo);
+      store.add(todo);
 
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
