@@ -85,8 +85,11 @@
                         'bg-white': !todo.completed
                     }" >{{ formatDate(todo.dueDate) }}</span>
                 </div>
-                <div class="text-red-500 font-semibold">
-                    {{ calculateCountdown(todo.dueDate) }}
+                <div class="font-semibold"
+                    [ngClass]="{
+                        'text-green-500': todo.completed,
+                        'bg-white text-red-500': !todo.completed
+                    }" >{{ todo.completed ? 'Done' : calculateCountdown(todo.dueDate) }}
                 </div>
             </div>
 
