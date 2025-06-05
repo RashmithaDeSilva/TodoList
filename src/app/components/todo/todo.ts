@@ -44,7 +44,7 @@ export class TodoComponent implements OnInit {
   }
 
   protected async saveEdit(event: Event, title: string, body: string, dueDateStr: string) {
-    event.preventDefault(); // Prevents page reload
+    event.preventDefault();
 
     if (!title || !dueDateStr) {
       this.errorMessage.set('Title and Due Date are required.');
@@ -52,8 +52,10 @@ export class TodoComponent implements OnInit {
     }
 
     const dueDate = new Date(dueDateStr);
-    if (dueDate < new Date()) {
-      this.errorMessage.set('Due date cannot be in the past.');
+    const now = new Date();
+
+    if (dueDate.getTime() < now.getTime()) {
+      this.errorMessage.set('Due date and time cannot be in the past.');
       return;
     }
 
@@ -96,5 +98,14 @@ export class TodoComponent implements OnInit {
     await this.todoService.checkTodo(id, isChecked);
     await this.loadTodos();
   }
+
+  protected getEditDueDateValue(): string {
+    const date = this.editTodoData()?.dueDate ?? new Date();
+    
+    // Default time to 00:00 if only date part was stored
+    const iso = new Date(date).toISOString(); // Full ISO with Z
+    return iso.slice(0, 16); // "yyyy-MM-ddTHH:mm"
+  }
+
   
 }

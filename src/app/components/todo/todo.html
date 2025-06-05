@@ -26,13 +26,13 @@
                     #bodyInput 
                     class="w-full border border-gray-300 rounded p-2 mb-3"
                     placeholder="Details"
-                    >{{ editTodoData()?.body }}
-                </textarea>
+                >{{ editTodoData()?.body }}</textarea>
+
                 <input 
                     #dueInput 
-                    type="date" 
+                    type="datetime-local"
                     class="w-full border border-gray-300 rounded p-2 mb-3"
-                    [value]="editTodoData()?.dueDate?.toISOString()?.slice(0, 10)"
+                    [value]="getEditDueDateValue()"
                     required
                 />
 
@@ -52,6 +52,7 @@
                     </button>
                 </div>
             </form>
+
         } @else {
             <!-- View Mode -->
             <div class="flex justify-between items-start mb-2">
