@@ -1,5 +1,6 @@
 import { computed, Injectable } from '@angular/core';
 import { TodoModel } from '../models/todo.type';
+import { Filters } from '../utils/enums/filters';
 
 @Injectable({
   providedIn: 'root'
@@ -67,20 +68,69 @@ export class TodoService {
   }
 
   // Get todos
-  async getTodos(): Promise<TodoModel[]> {
+  async getTodos(page: number, size: number, filter: Filters, searchText: string): Promise<{
+    todos: TodoModel[]; total: number; next: boolean; privias: boolean; }> {
+
     const db = await this.waitForDB();
+    const offset = (page - 1) * size;
+    const todos: TodoModel[] = [];
+
     return new Promise((resolve, reject) => {
       const tx = db.transaction('todos', 'readonly');
       const store = tx.objectStore('todos');
-      const request = store.getAll();
+      const request = store.openCursor();
 
-      request.onsuccess = () => {
-        const todos = (request.result as any[]).map((item): TodoModel => ({
-          ...item,
-          createdDate: new Date(item.createdDate),
-          dueDate: new Date(item.dueDate)
-        }));
-        resolve(todos);
+      let matchedCount = 0;
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+        if (!cursor) {
+          // Finished scanning, resolve with results
+          resolve({
+            todos,
+            total: matchedCount,
+            next: matchedCount > offset + size,
+            privias: page > 1 && offset < matchedCount,
+          });
+          return;
+        }
+
+        const raw = cursor.value;
+        const todo: TodoModel = {
+          ...raw,
+          createdDate: new Date(raw.createdDate),
+          dueDate: new Date(raw.dueDate)
+        };
+
+        const now = new Date();
+        let matchesFilter = true;
+
+        switch (filter) {
+          case Filters.OPEN:
+            matchesFilter = !todo.completed && todo.dueDate > now;
+            break;
+          case Filters.EXPIRED:
+            matchesFilter = !todo.completed && todo.dueDate <= now;
+            break;
+          case Filters.DONE:
+            matchesFilter = todo.completed;
+            break;
+          case Filters.ALL:
+          default:
+            matchesFilter = true;
+        }
+
+        const matchesSearch = searchText.trim() === '' ||
+          todo.title.toLowerCase().includes(searchText.toLowerCase());
+
+        if (matchesFilter && matchesSearch) {
+          if (matchedCount >= offset && todos.length < size) {
+            todos.push(todo);
+          }
+          matchedCount++;
+        }
+
+        cursor.continue();
       };
 
       request.onerror = () => reject(request.error);
@@ -123,16 +173,67 @@ export class TodoService {
   }
 
   // Get todo count
-  async getTodoCount(): Promise<number> {
-    await this.waitForDB();
+  // async getTodoCount(): Promise<number> {
+  //   await this.waitForDB();
+  //   return new Promise((resolve, reject) => {
+  //     if (!this.db) return reject('DB not ready');
+
+  //     const tx = this.db.transaction('todos', 'readonly');
+  //     const store = tx.objectStore('todos');
+  //     const request = store.count();
+
+  //     request.onsuccess = () => resolve(request.result);
+  //     request.onerror = () => reject(request.error);
+  //   });
+  // }
+
+  // Get todo count
+  async getTodoCount(filter: Filters): Promise<number> {
+    const db = await this.waitForDB();
+
     return new Promise((resolve, reject) => {
-      if (!this.db) return reject('DB not ready');
+      if (!db) return reject('DB not ready');
 
-      const tx = this.db.transaction('todos', 'readonly');
+      const tx = db.transaction('todos', 'readonly');
       const store = tx.objectStore('todos');
-      const request = store.count();
+      const request = store.openCursor();
 
-      request.onsuccess = () => resolve(request.result);
+      let count = 0;
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+        if (!cursor) {
+          return resolve(count); // No more records
+        }
+
+        const todo = cursor.value as TodoModel;
+        todo.dueDate = new Date(todo.dueDate);
+
+        const now = new Date();
+        let matchesFilter = true;
+
+        switch (filter) {
+          case Filters.OPEN:
+            matchesFilter = !todo.completed && todo.dueDate > now;
+            break;
+          case Filters.EXPIRED:
+            matchesFilter = !todo.completed && todo.dueDate <= now;
+            break;
+          case Filters.DONE:
+            matchesFilter = todo.completed;
+            break;
+          case Filters.ALL:
+          default:
+            matchesFilter = true;
+        }
+
+        if (matchesFilter) {
+          count++;
+        }
+
+        cursor.continue();
+      };
+
       request.onerror = () => reject(request.error);
     });
   }

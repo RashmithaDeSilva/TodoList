@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import { TodoModel } from '../../models/todo.type';
 import { TodoService } from '../../service/todos';
 import { NgClass } from '@angular/common';
+import { Filters } from '../../utils/enums/filters';
 
 @Component({
   selector: 'app-todo',
@@ -19,6 +20,8 @@ export class TodoComponent implements OnInit {
   private intervalId = signal<number>(-1);
   protected isDeleteId = signal<number>(-1);
   isEditMode = signal<boolean>(false);
+  filter: Filters = Filters.ALL;
+  searchText = signal<string>('');
 
 
   constructor(private todoService: TodoService) {}
@@ -42,8 +45,8 @@ export class TodoComponent implements OnInit {
   }
 
   async loadTodos() {
-    const data = await this.todoService.getTodos();
-    this.todos.set(data);
+    const data = await this.todoService.getTodos(1, 10, this.filter, this.searchText());
+    this.todos.set(data.todos);
     this.updateCountdowns();
   }
 
@@ -126,6 +129,7 @@ export class TodoComponent implements OnInit {
     const isChecked = (event.target as HTMLInputElement).checked;
     await this.todoService.checkTodo(id, isChecked);
     await this.loadTodos();
+    this.notify.emit(); // Send notification to parent
   }
 
   protected getEditDueDateValue(): string {
