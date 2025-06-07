@@ -102,7 +102,6 @@ jobs:
 
   Deploy:
     if: github.ref == 'refs/heads/main'
-    needs: Release
     runs-on: ubuntu-latest
 
     steps:
