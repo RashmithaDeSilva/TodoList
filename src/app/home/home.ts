@@ -56,7 +56,6 @@ export class Home implements OnInit {
 
     if (newest) {
       const data = await this.todoService.getTodos(1, 10, this.filter, this.searchText())
-      // let todos = await this.todoService.getTodos();
 
       if (this.filter === Filters.ALL || this.filter === Filters.OPEN) {
         data.todos.pop()
@@ -73,6 +72,7 @@ export class Home implements OnInit {
     this.filter = value as Filters;
     this.child.filter = value as Filters;
     await this.loadTodoCount();
+    this.child.page.set(1);
     await this.child.loadTodos();
   }
 
@@ -88,6 +88,7 @@ export class Home implements OnInit {
   protected async search(value: string) {
     this.searchText.set(value);
     this.child.searchText.set(value);
+    this.child.page.set(1);
     await this.child.loadTodos();
   }
 

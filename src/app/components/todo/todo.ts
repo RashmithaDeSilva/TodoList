@@ -23,6 +23,10 @@ export class TodoComponent implements OnInit {
   filter: Filters = Filters.ALL;
   searchText = signal<string>('');
   protected skelitenSize = signal<Array<number>>([1,2,3]);
+  page = signal<number>(1);
+  protected showDirectionBtns = signal<boolean>(false);
+  protected nextBtn = signal<boolean>(false);
+  protected previousBtn = signal<boolean>(false);
 
 
   constructor(private todoService: TodoService) {}
@@ -49,13 +53,19 @@ export class TodoComponent implements OnInit {
   }
 
   async loadTodos() {
-    const data = await this.todoService.getTodos(1, 10, this.filter, this.searchText());
+    const data = await this.todoService.getTodos(this.page(), 10, this.filter, this.searchText());
     this.todos.set(data.todos);
+    this.showDirectionBtns.set(this.page() === 1 && data.next || this.page() !== 1 && data.privias);
+    this.nextBtn.set(data.next);
+    this.previousBtn.set(data.privias);
     this.updateCountdowns();
   }
 
   protected async deleteTodo(id: number) {
     await this.todoService.deleteTodo(id);
+    if (this.todos().length === 1) {
+      this.page.set((this.page() - 1) > 0 ? this.page() - 1 : 1);
+    }
     await this.loadTodos();
     this.notify.emit(); // Send notification to parent
   }
@@ -146,6 +156,16 @@ export class TodoComponent implements OnInit {
     const minutes = String(date.getMinutes()).padStart(2, '0');
 
     return `${year}-${month}-${day}T${hours}:${minutes}`; // "yyyy-MM-ddTHH:mm"
+  }
+
+  protected async next() {
+    this.page.set(this.page() + 1)
+    await this.loadTodos();
+  }
+
+  protected async previous() {
+    this.page.set(this.page() - 1)
+    await this.loadTodos();
   }
 
 }
