@@ -42,7 +42,6 @@ export class Home implements OnInit {
 
     await this.todoService.addTodo(newTodo);
     await this.loadTodoCount();
-    // await this.child.loadTodos();
   }
 
   // This function trigger when child component send notify
@@ -51,19 +50,24 @@ export class Home implements OnInit {
   }
   
   protected async handleAddTodo(child: TodoComponent) {
-    await this.addTodo();
-    const newest = await this.todoService.getNewestTodo();
+    if (this.child.isTodoExsist()) {
+      await this.addTodo();
+      const newest = await this.todoService.getNewestTodo();
 
-    if (newest) {
-      const data = await this.todoService.getTodos(1, 10, this.filter, this.searchText())
+      if (newest) {
+        const data = await this.todoService.getTodos(1, 10, this.filter, this.searchText())
 
-      if (this.filter === Filters.ALL || this.filter === Filters.OPEN) {
-        data.todos.pop()
+        if (this.filter === Filters.ALL || this.filter === Filters.OPEN) {
+          data.todos.pop()
+        }
+        data.todos.unshift(newest);
+
+        child.todos.set(data.todos);
+        child.editTodo(newest);
       }
-      data.todos.unshift(newest);
 
-      child.todos.set(data.todos);
-      child.editTodo(newest);
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
@@ -74,6 +78,9 @@ export class Home implements OnInit {
     await this.loadTodoCount();
     this.child.page.set(1);
     await this.child.loadTodos();
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   protected getTitle(): string {
@@ -90,6 +97,9 @@ export class Home implements OnInit {
     this.child.searchText.set(value);
     this.child.page.set(1);
     await this.child.loadTodos();
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
 }

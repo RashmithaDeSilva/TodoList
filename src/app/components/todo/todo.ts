@@ -13,7 +13,7 @@ export class TodoComponent implements OnInit {
   // This snd notification to perent
   @Output() notify = new EventEmitter<void>();
   todos = signal<TodoModel[]>([]);
-  protected isTodoExsist = signal<boolean>(false);
+  isTodoExsist = signal<boolean>(false);
   protected editTodoData = signal<TodoModel | null>(null);
   protected errorMessage = signal<string | null>(null);
   protected countdownMap = new Map<number, string>();
@@ -161,11 +161,17 @@ export class TodoComponent implements OnInit {
   protected async next() {
     this.page.set(this.page() + 1)
     await this.loadTodos();
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   protected async previous() {
     this.page.set(this.page() - 1)
     await this.loadTodos();
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
 }
