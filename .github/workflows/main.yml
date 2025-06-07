@@ -1,12 +1,14 @@
-name: Build and Release Angular App
+name: Build, Deploy and Release Todo App
 
 on:
   push:
+    branches:
+      - main
     tags:
-      - 'v*' # Runs on version tags like v1.0.0
+      - 'v*'
 
 jobs:
-  build:
+  Release:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,21 +21,105 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: | 
+        run: |
           npm install --legacy-peer-dep
           npm install --force
-        
+
       - name: Build Angular App
         run: npm run build -- --configuration production
 
       - name: Create ZIP package
         run: |
           cd dist
-          zip -r ../angular-todo-${{ github.ref_name }}.zip ./*
+          zip -r ../todo-${{ github.ref_name }}.zip ./*
 
       - name: Upload Release Asset
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: angular-todo-${{ github.ref_name }}.zip
+          files: todo-${{ github.ref_name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+  Build_Containers:
+    needs: Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          npm install --legacy-peer-dep
+          npm install --force
+
+      - name: Build Angular App
+        run: npm run build -- --configuration production
+
+      - name: Set Docker tags
+        id: vars
+        run: |
+          VERSION_TAG=${GITHUB_REF#refs/tags/}
+          echo "version_tag=$VERSION_TAG" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-app:latest -t ${{ secrets.DOCKER_USERNAME }}/todo-app:${{ steps.vars.outputs.version_tag }} .
+
+      - name: Push to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:${{ steps.vars.outputs.version_tag }}
+
+      - name: Push to GitHub Container Registry
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/todo-app
+          docker tag ${{ github.repository_owner }}/todo-app:latest $IMAGE:latest
+          docker tag ${{ github.repository_owner }}/todo-app:${{ steps.vars.outputs.version_tag }} $IMAGE:${{ steps.vars.outputs.version_tag }}
+          docker push $IMAGE:latest
+          docker push $IMAGE:${{ steps.vars.outputs.version_tag }}
+
+  Deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies and build app
+        run: |
+          npm install --legacy-peer-dep
+          npm run build -- --configuration production
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist/Todo/browser
