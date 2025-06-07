@@ -1,5 +1,15 @@
-<app-navbar [title]="title()"/>
+<!-- Wrapper to control full height and flex layout -->
+<div class="min-h-screen flex flex-col">
 
-<main class="px-5 lg:px-40 xl:px-60 2xl:px-100 py-10 w-full h-full">
-  <router-outlet />
-</main>
+  <!-- Navbar -->
+  <app-navbar [title]="title()" />
+
+  <!-- Router outlet (main content) -->
+  <main class="flex-grow px-5 lg:px-40 xl:px-60 2xl:px-100 py-10 w-full">
+    <router-outlet />
+  </main>
+
+  <!-- Footer -->
+  <app-footer />
+</div>
+
