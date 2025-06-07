@@ -1,5 +1,37 @@
 @if (!isTodoExsist()) {
-    <p>Loading ...</p>
+    @for (n of skelitenSize(); track $index) {
+        <!-- Skeleton for Todo View -->
+        <div class="w-full max-w-2xl animate-pulse space-y-4 p-5 border border-gray-200 bg-white rounded-2xl shadow-md relative overflow-hidden">
+            <!-- Title and Date -->
+            <div class="flex justify-between items-start mb-2">
+                <div class="h-6 bg-gray-300 rounded w-1/2"></div>
+                <div class="h-4 bg-gray-300 rounded w-1/4"></div>
+            </div>
+
+            <!-- Body Text -->
+            <div class="space-y-2">
+                <div class="h-4 bg-gray-300 rounded w-full"></div>
+                <div class="h-4 bg-gray-300 rounded w-5/6"></div>
+                <!-- <div class="h-4 bg-gray-300 rounded w-2/3"></div> -->
+            </div>
+
+            <!-- Due Date and Countdown -->
+            <div class="flex justify-between items-center text-sm text-gray-600 mb-4 mt-4">
+                <div class="flex gap-2 items-center">
+                <div class="h-4 bg-gray-300 rounded w-12"></div>
+                <div class="h-4 bg-gray-300 rounded w-20"></div>
+                </div>
+                <div class="h-4 bg-gray-300 rounded w-16"></div>
+            </div>
+
+            <!-- Buttons and Checkbox -->
+            <div class="flex md:justify-end justify-start gap-4">
+                <div class="h-5 w-5 bg-gray-300 rounded-full"></div>
+                <div class="h-5 w-5 bg-gray-300 rounded-full"></div>
+                <div class="h-5 w-5 bg-gray-300 rounded-full"></div>
+            </div>
+        </div>
+    }
 }
 
 <!-- Error Box -->

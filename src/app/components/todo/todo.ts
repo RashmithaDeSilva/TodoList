@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
+import { Component, computed, EventEmitter, OnInit, Output, Signal, signal } from '@angular/core';
 import { TodoModel } from '../../models/todo.type';
 import { TodoService } from '../../service/todos';
 import { NgClass } from '@angular/common';
@@ -22,14 +22,18 @@ export class TodoComponent implements OnInit {
   isEditMode = signal<boolean>(false);
   filter: Filters = Filters.ALL;
   searchText = signal<string>('');
+  protected skelitenSize = signal<Array<number>>([1,2,3]);
 
 
   constructor(private todoService: TodoService) {}
 
   async ngOnInit() {
     // Load todos
-    await this.loadTodos();
-    this.isTodoExsist.set(true);
+    const interval = setInterval(async () => {
+        await this.loadTodos();
+        this.isTodoExsist.set(true);
+        clearInterval(interval);
+    }, 1500); // 1.5 seconds
 
     // Set live time timer
     this.updateCountdowns();
