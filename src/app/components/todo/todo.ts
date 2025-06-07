@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, OnInit, Output, Signal, signal } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import { TodoModel } from '../../models/todo.type';
 import { TodoService } from '../../service/todos';
 import { NgClass } from '@angular/common';

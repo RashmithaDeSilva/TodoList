@@ -1,4 +1,4 @@
-import { computed, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { TodoModel } from '../models/todo.type';
 import { Filters } from '../utils/enums/filters';
 
