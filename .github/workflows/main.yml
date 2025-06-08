@@ -116,7 +116,8 @@ jobs:
       - name: Install dependencies and build app
         run: |
           npm install --legacy-peer-dep
-          npm run build -- --configuration production
+          npm run build
+          ls -al dist
 
       - name: Deploy to production branch
         uses: peaceiris/actions-gh-pages@v3
