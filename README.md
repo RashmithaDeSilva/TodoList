@@ -1,4 +1,4 @@
-# 📝 Todo List App
+# 📝 Todo List
 
 A modern, mobile-responsive **Todo List App** built with **Angular**, **Tailwind CSS**, and **IndexedDB** for persistent client-side storage. It includes advanced features like live countdown timers, search & filtering, pagination, and full CRUD (Create, Read, Update, Delete) functionality. The project is fully containerized with Docker and CI/CD automated using **GitHub Actions**, pushing builds to **Docker Hub** and **GitHub Container Registry**, with tagged version releases.
 
@@ -77,8 +77,8 @@ CI config is located in **.github/workflows/main.yml**
 
 ## 🐳 Docker
 
-[Docker repo](https://hub.docker.com/r/rashmithadesilva/todo-app)
-[Github container registry](https://github.com/RashmithaDeSilva/TodoList/pkgs/container/todo-app)
+- [Dockerhub](https://hub.docker.com/r/rashmithadesilva/todo-app)
+- [Github container registry](https://github.com/RashmithaDeSilva/TodoList/pkgs/container/todo-app)
 
 Build Image
 ```sh
