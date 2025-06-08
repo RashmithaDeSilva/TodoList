@@ -128,10 +128,3 @@ jobs:
           publish_dir: dist/Todo/browser
           publish_branch: production
           force_orphan: true  # Optional: creates a clean history for the branch
-
-      # - name: Deploy to GitHub Pages
-      #   uses: JamesIves/github-pages-deploy-action@v4
-      #   with:
-      #     folder: dist/Todo/browser
-      #     branch: production  
-      #     token: ${{ secrets.GH_TOKEN }}
