@@ -94,9 +94,9 @@ jobs:
 
       - name: Push to GitHub Container Registry
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/todo-app
-          docker tag ${{ github.repository_owner }}/todo-app:latest $IMAGE:latest
-          docker tag ${{ github.repository_owner }}/todo-app:${{ steps.vars.outputs.version_tag }} $IMAGE:${{ steps.vars.outputs.version_tag }}
+          IMAGE=ghcr.io/rashmithadesilva/todo-app
+          docker tag rashmithadesilva/todo-app:latest $IMAGE:latest
+          docker tag rashmithadesilva/todo-app:${{ steps.vars.outputs.version_tag }} $IMAGE:${{ steps.vars.outputs.version_tag }}
           docker push $IMAGE:latest
           docker push $IMAGE:${{ steps.vars.outputs.version_tag }}
 
