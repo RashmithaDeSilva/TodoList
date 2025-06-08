@@ -1,59 +1,116 @@
-# Todo
+# 📝 Todo List App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0.
+A modern, mobile-responsive **Todo List App** built with **Angular**, **Tailwind CSS**, and **IndexedDB** for persistent client-side storage. It includes advanced features like live countdown timers, search & filtering, pagination, and full CRUD (Create, Read, Update, Delete) functionality. The project is fully containerized with Docker and CI/CD automated using **GitHub Actions**, pushing builds to **Docker Hub** and **GitHub Container Registry**, with tagged version releases.
 
-## Development server
+<br>
 
-To start a local development server, run:
+## 📸 Screenshots
 
+| Mobile View | Desktop View |
+|-------------|--------------|
+| ![Mobile](README-imgs/mobile-ss.jpg) | ![Desktop](README-imgs/pc-ss.png) |
+
+<br>
+
+## 🚀 Features
+
+- ⚡ **Offline-first** with IndexedDB (user data stored locally)
+- 📱 Fully **responsive UI** (Mobile + Desktop)
+- 🔍 **Search and filter** todos by title or due date
+- 📆 **Pagination** for long lists
+- ⏳ **Live countdown timer** per todo
+- 🧠 **Edit/Delete** todos
+- 📦 **Dockerized** build with multi-platform support
+- 🔄 **CI/CD pipeline** via GitHub Actions
+- 🐋 Pushes to **Docker Hub** and **GHCR**
+- 🏷️ **GitHub Releases** for each version
+
+<br>
+
+## 🛠️ Tech Stack
+
+- **Frontend:** Angular (Standalone Components), TypeScript
+- **Styling:** Tailwind CSS
+- **Storage:** IndexedDB (via Angular IndexedDB wrapper)
+- **CI/CD:** GitHub Actions
+- **Containers:** Docker
+- **Registries:** Docker Hub & GitHub Container Registry
+
+<br>
+
+## 🧪 Run Locally
+
+### Prerequisites
+- Node.js
+- Angular CLI
+- Docker (optional for container run)
+
+### Clone the repo
 ```bash
+git clone https://github.com/yourusername/todo-app.git
+cd todo-app
+
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
 ```bash
-ng generate component component-name
+docker build -t todo-app .
+docker run -itd --name todo-app -p 8080:80 todo-app
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+<br>
 
-```bash
-ng generate --help
+## 🚢 Deployment & CI/CD
+This project uses GitHub Actions for automated build and deployment.
+
+### Pipeline Features:
+- Runs on push to **main**
+- Builds Angular app
+- Creates Docker image
+- Pushes to Docker Hub and GHCR
+- Creates GitHub release with downloadable build
+
+CI config is located in **.github/workflows/main.yml**
+
+<br>
+
+## 🐳 Docker
+
+[Docker repo](https://hub.docker.com/r/rashmithadesilva/todo-app)
+[Github container registry](https://github.com/RashmithaDeSilva/TodoList/pkgs/container/todo-app)
+
+Build Image
+```sh
+docker build -t todo-app .
 ```
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
+Run Container
+```sh
+docker run -itd --name todo-app -p 8080:80 todo-app
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+Pull from Registry
+```sh
+docker pull rashmithadesilva/todo-app:latest
+docker run -itd --name todo-app -p 8080:80 rashmithadesilva/todo-app:latest
 ```
 
-## Running end-to-end tests
+<br>
 
-For end-to-end (e2e) testing, run:
+## 📦 Download Releases
 
-```bash
-ng e2e
-```
+Find compiled versions of the app under the [Releases tab](https://github.com/RashmithaDeSilva/TodoList/releases).
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+<br>
 
-## Additional Resources
+## 🤝 Contributing
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Contributions are welcome! Please open an issue or submit a PR.
+
+<br>
+
+## 📄 License
+
+MIT License. See [LICENSE](https://github.com/RashmithaDeSilva/TodoList/blob/main/LICENSE) file.
+

@@ -100,31 +100,31 @@ jobs:
           docker push $IMAGE:latest
           docker push $IMAGE:${{ steps.vars.outputs.version_tag }}
 
-  Deploy:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+  # Deploy:
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 22
 
-      - name: Install dependencies and build app
-        run: |
-          npm install --legacy-peer-dep
-          npm run build
-          pwd
-          ls -al
-          ls -al ./dist/Todo/browser
+  #     - name: Install dependencies and build app
+  #       run: |
+  #         npm install --legacy-peer-dep
+  #         npm run build
+  #         pwd
+  #         ls -al
+  #         ls -al ./dist/Todo/browser
 
-      - name: Deploy to production branch
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.TOKEN }}
-          publish_dir: dist/Todo/browser
-          publish_branch: production
-          force_orphan: true  # Optional: creates a clean history for the branch
+  #     - name: Deploy to production branch
+  #       uses: peaceiris/actions-gh-pages@v3
+  #       with:
+  #         github_token: ${{ secrets.TOKEN }}
+  #         publish_dir: dist/Todo/browser
+  #         publish_branch: production
+  #         force_orphan: true  # Optional: creates a clean history for the branch
